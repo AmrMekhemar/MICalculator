@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">MICalculator</string>
+    <string name="result">Result</string>
+    <string name="redo">redo</string>
+    <string name="min">Min</string>
+    <string name="mul">Mul</string>
+    <string name="equ">EQU</string>
+    <string name="div">Div</string>
+    <string name="plus">plus</string>
+    <string name="undo">undo</string>
+    <string name="enter_second_operand">Enter Second Operand</string>
+    <string name="history">History</string>
+</resources>

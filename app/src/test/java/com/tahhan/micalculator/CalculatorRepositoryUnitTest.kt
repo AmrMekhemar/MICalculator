@@ -6,6 +6,7 @@ import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.Before
+import java.lang.Exception
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -37,11 +38,10 @@ class CalculatorRepositoryUnitTest {
     }
 
     @Test
-    fun when_firstOperandIsZero_operate_division_shouldReturnAnException() {
-        repo.firstOperand = 0
-        val actual = repo.operate("/", 5)
-        val expected = Exception("Can't Divide on Zero")
-        assertEquals(expected, actual)
+    fun when_secondOperandIsZero_operate_division_shouldReturnAnException() {
+        val actual = repo.operate("/", 0) as Exception
+        val expected = "Can't Divide on Zero"
+        assertEquals(expected, actual.message)
     }
 
 

@@ -1,7 +1,8 @@
-package com.tahhan.micalculator
+package com.tahhan.micalculator.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.tahhan.micalculator.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

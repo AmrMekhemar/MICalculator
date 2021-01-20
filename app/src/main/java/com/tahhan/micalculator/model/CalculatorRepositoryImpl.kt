@@ -1,9 +1,15 @@
 package com.tahhan.micalculator.model
+import java.lang.Exception
+class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
 
-class CalculatorRepositoryImpl() : CalculatorRepository {
-    var firstOperand = 0
     override fun operate(operation: String, secondOperand: Int): Any {
-        return 1.0F
+        return when (operation) {
+            "+" -> add(secondOperand)
+            "-" -> subtract(secondOperand)
+            "/" -> divide(secondOperand)
+            "*" -> multiply(secondOperand)
+            else -> Exception("Not Defined Operation")
+        }
     }
 
     override fun redo() {
@@ -12,5 +18,30 @@ class CalculatorRepositoryImpl() : CalculatorRepository {
 
     override fun undo() {
         TODO("Not yet implemented")
+    }
+
+    private fun divide(secondOperand: Int): Any {
+        return when (secondOperand) {
+            0 -> Exception("Can't Divide on Zero")
+            else ->{
+                firstOperand /= secondOperand
+                firstOperand
+            }
+        }
+    }
+
+    private fun add(secondOperand: Int):Float{
+        firstOperand += secondOperand
+        return firstOperand
+    }
+
+    private fun subtract(secondOperand: Int):Float{
+        firstOperand -= secondOperand
+        return firstOperand
+    }
+
+    private fun multiply(secondOperand: Int):Float{
+        firstOperand *= secondOperand
+        return firstOperand
     }
 }

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragmentCalculator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.CalculatorFragment">
+
+    <TextView
+        android:id="@+id/resultTextView"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/resultsInputLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <Button
+        android:id="@+id/redoButton"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:width="110dp"
+        android:text="@string/redo"
+        app:layout_constraintBottom_toBottomOf="@+id/undoButton"
+        app:layout_constraintStart_toStartOf="@+id/multiplyButton" />
+
+    <Button
+        android:id="@+id/minusButton"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="88dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/min"
+        app:icon="@drawable/minus"
+        app:layout_constraintBottom_toTopOf="@+id/equalButton"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/multiplyButton"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/mul"
+        app:icon="@drawable/multiply_icon"
+        app:layout_constraintBottom_toTopOf="@+id/divisionButton"
+        app:layout_constraintStart_toStartOf="@+id/divisionButton" />
+
+    <Button
+        android:id="@+id/equalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/equ"
+        app:icon="@drawable/equal_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/divisionButton"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="@string/div"
+        app:icon="@drawable/division_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/minusButton"
+        app:layout_constraintEnd_toStartOf="@+id/minusButton" />
+
+    <Button
+        android:id="@+id/plusButton"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/plus"
+        app:icon="@drawable/plus"
+        app:layout_constraintBottom_toTopOf="@+id/minusButton"
+        app:layout_constraintStart_toStartOf="@+id/minusButton" />
+
+    <Button
+        android:id="@+id/undoButton"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:width="110dp"
+        android:text="@string/undo"
+        app:layout_constraintBottom_toTopOf="@+id/plusButton"
+        app:layout_constraintEnd_toEndOf="@+id/plusButton" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/resultsInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/undoButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/enterNumberEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_second_operand"
+            android:inputType="number" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/historyRV"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/resultTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/OperationsHistorytextView"
+        tools:listitem="@layout/history_item" />
+
+    <TextView
+        android:id="@+id/OperationsHistorytextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/sriracha"
+        android:text="@string/history"
+        android:textSize="24sp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

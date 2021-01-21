@@ -8,7 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tahhan.micalculator.R
 
 
-class OperationAdapter(private var operations: List<Pair<String,Int>>, val listener: (Pair<String,Int>) -> Unit) :
+class OperationAdapter(
+    private var operations: List<Triple<String, Int, Float>>,
+    val listener: (Triple<String, Int, Float>) -> Unit
+) :
     RecyclerView.Adapter<OperationAdapter.ViewHolder?>() {
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val operationsTV: TextView = itemView.findViewById(R.id.operationTV)
@@ -22,7 +25,7 @@ class OperationAdapter(private var operations: List<Pair<String,Int>>, val liste
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-         val item =operations[position]
+        val item = operations[position]
         holder.operationsTV.text = item.first
         holder.secondOperandTV.text = item.second.toString()
 
@@ -31,6 +34,7 @@ class OperationAdapter(private var operations: List<Pair<String,Int>>, val liste
         }
 
     }
+
     override fun getItemCount(): Int {
         return operations.size
     }

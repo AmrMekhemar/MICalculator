@@ -3,12 +3,14 @@ package com.tahhan.micalculator.view
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tahhan.micalculator.R
@@ -17,10 +19,12 @@ import com.tahhan.micalculator.toast
 import com.tahhan.micalculator.viewmodel.CalculatorViewModel
 import com.tahhan.micalculator.viewmodel.CalculatorViewModelFactory
 import kotlinx.android.synthetic.main.fragment_calculator.*
+import java.lang.Exception
 
 
 private const val SHARED_PREFS = "1001"
 private const val RESULT_KEY = "1002"
+private const val TAG = "CalculatorFragment"
 
 
 class CalculatorFragment : Fragment() {
@@ -32,7 +36,7 @@ class CalculatorFragment : Fragment() {
         }
     private var operation = ""
     private var secondOperand = ""
-    private var operationHistory = mutableListOf<Pair<String, Int>>()
+
 
     private val viewModel: CalculatorViewModel by viewModels {
         CalculatorViewModelFactory(CalculatorRepositoryImpl(firstOperand))
@@ -49,6 +53,30 @@ class CalculatorFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         resultTextView.text = firstOperand.toString()
+        setupListeners()
+        observeFirstOperand()
+        observeOperationHistory()
+    }
+
+    private fun observeOperationHistory() {
+        viewModel.getOperationHistoryLiveData().observe(viewLifecycleOwner, Observer {
+            populateRV()
+            Log.d(TAG,"operation= $it")
+            historyRV.adapter = OperationAdapter(it) { operationPair ->
+                secondOperand = operationPair.second.toString()
+                operation = operationPair.first
+                operate(secondOperand)
+            }
+        })
+    }
+
+    private fun observeFirstOperand() {
+        viewModel.getFirstOperandLiveData().observe(viewLifecycleOwner, Observer {
+            firstOperand = it
+        })
+    }
+
+    private fun setupListeners() {
         divisionButton.setOnClickListener {
             operation = "/"
             makeButtonsNonClickable(operation)
@@ -72,7 +100,7 @@ class CalculatorFragment : Fragment() {
             populateRV()
         }
         resetButton.setOnClickListener {
-            firstOperand = 0f
+            firstOperand = 0F
             secondOperand = ""
             makeButtonsClickable()
             resultTextView.text = firstOperand.toString()
@@ -82,15 +110,20 @@ class CalculatorFragment : Fragment() {
             operation = ""
             makeButtonsClickable()
         }
+        redoButton.setOnClickListener {
+            viewModel.redo()
+        }
+        undoButton.setOnClickListener {
+            viewModel.undo()
+        }
     }
 
     private fun operate(secondOperand: String) {
         if (operation.isNotBlank() && secondOperand.isNotBlank()) {
             val returnValue = viewModel.operate(operation, secondOperand.toInt())
-            if (returnValue is Float) {
-                firstOperand = returnValue
+            if (returnValue !is Exception) {
+                firstOperand = returnValue.toString().toFloat()
                 resultTextView.text = firstOperand.toString()
-                operationHistory.add(Pair(operation, secondOperand.toInt()))
             }
         } else requireContext().toast("you must click an operation then enter a number")
     }
@@ -155,13 +188,10 @@ class CalculatorFragment : Fragment() {
             requireContext(),
             RecyclerView.VERTICAL, false
         )
-        historyRV.adapter = OperationAdapter(operationHistory) { operationPair ->
-            secondOperand = operationPair.second.toString()
-            operation = operationPair.first
-            operate(secondOperand)
-            //  historyRV.adapter?.notifyDataSetChanged()
-        }
+
     }
 
 
 }
+
+

@@ -4,4 +4,5 @@ interface CalculatorRepository {
      fun operate(operation:String,secondOperand:Int): Any
      fun redo()
      fun undo()
+     fun reset()
 }

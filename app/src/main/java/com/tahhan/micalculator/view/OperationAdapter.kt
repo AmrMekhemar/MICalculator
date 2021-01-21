@@ -6,11 +6,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.tahhan.micalculator.R
+import com.tahhan.micalculator.model.Operation
 
 
 class OperationAdapter(
-    private var operations: List<Triple<String, Int, Float>>,
-    val listener: (Triple<String, Int, Float>) -> Unit
+    private var operations: List<Operation>,
+    val listener: (Operation) -> Unit
 ) :
     RecyclerView.Adapter<OperationAdapter.ViewHolder?>() {
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -26,8 +27,8 @@ class OperationAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = operations[position]
-        holder.operationsTV.text = item.first
-        holder.secondOperandTV.text = item.second.toString()
+        holder.operationsTV.text = item.operation
+        holder.secondOperandTV.text = item.secondOperand.toString()
 
         holder.itemView.setOnClickListener {
             listener(item)

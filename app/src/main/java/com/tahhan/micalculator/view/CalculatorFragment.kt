@@ -3,7 +3,6 @@ package com.tahhan.micalculator.view
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -55,16 +54,22 @@ class CalculatorFragment : Fragment() {
         resultTextView.text = firstOperand.toString()
         setupListeners()
         observeFirstOperand()
-        observeOperationHistory()
+        populateRV()
     }
 
     private fun observeOperationHistory() {
         viewModel.getOperationHistoryLiveData().observe(viewLifecycleOwner, Observer {
-            populateRV()
-            Log.d(TAG,"operation= $it")
-            historyRV.adapter = OperationAdapter(it) { operationPair ->
-                secondOperand = operationPair.second.toString()
-                operation = operationPair.first
+            // Log.d(TAG,"operation= $it")
+            historyRV.adapter = OperationAdapter(it) { operationItem ->
+                secondOperand = operationItem.secondOperand.toString()
+                operation = operationItem.operation
+                when (operation){
+                    "+"-> operation = "-"
+                    "-"-> operation = "+"
+                    "*"-> operation = "/"
+                    "/"-> operation = "*"
+                    else-> {}
+                }
                 operate(secondOperand)
             }
         })
@@ -73,6 +78,7 @@ class CalculatorFragment : Fragment() {
     private fun observeFirstOperand() {
         viewModel.getFirstOperandLiveData().observe(viewLifecycleOwner, Observer {
             firstOperand = it
+            resultTextView.text = firstOperand.toString()
         })
     }
 
@@ -100,10 +106,9 @@ class CalculatorFragment : Fragment() {
             populateRV()
         }
         resetButton.setOnClickListener {
-            firstOperand = 0F
             secondOperand = ""
             makeButtonsClickable()
-            resultTextView.text = firstOperand.toString()
+            viewModel.reset()
         }
 
         deselectButton.setOnClickListener {
@@ -112,9 +117,11 @@ class CalculatorFragment : Fragment() {
         }
         redoButton.setOnClickListener {
             viewModel.redo()
+            makeButtonsClickable()
         }
         undoButton.setOnClickListener {
             viewModel.undo()
+            makeButtonsClickable()
         }
     }
 
@@ -125,7 +132,7 @@ class CalculatorFragment : Fragment() {
                 firstOperand = returnValue.toString().toFloat()
                 resultTextView.text = firstOperand.toString()
             }
-        } else requireContext().toast("you must click an operation then enter a number")
+        } else requireContext().toast("you must click an operation and enter a number")
     }
 
 
@@ -180,6 +187,7 @@ class CalculatorFragment : Fragment() {
         divisionButton.setBackgroundColor(primaryColor)
         minusButton.setBackgroundColor(primaryColor)
         plusButton.setBackgroundColor(primaryColor)
+        enterNumberEditText.text?.clear()
     }
 
 
@@ -188,9 +196,8 @@ class CalculatorFragment : Fragment() {
             requireContext(),
             RecyclerView.VERTICAL, false
         )
-
+        observeOperationHistory()
     }
-
 
 }
 

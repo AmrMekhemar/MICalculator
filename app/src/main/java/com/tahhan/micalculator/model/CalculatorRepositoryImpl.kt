@@ -7,12 +7,11 @@ import java.lang.Exception
 private const val TAG = "CalculatorRepositoryImp"
 
 class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
-    private var operationHistory = mutableListOf<Triple<String, Int, Float>>()
-    var operationHistoryLiveData: MutableLiveData<List<Triple<String, Int, Float>>> =
+    var operationHistoryLiveData: MutableLiveData<List<Operation>> =
         MutableLiveData()
     var firstOperandLiveData: MutableLiveData<Float> = MutableLiveData()
-    private var undoOperationHistory = mutableListOf<Triple<String, Int, Float>>()
-    var recentResults = mutableListOf<Float>()
+    private var operationHistory = mutableListOf<Operation>()
+    private var undoOperationHistory = mutableListOf<Operation>()
 
 
     override fun operate(operation: String, secondOperand: Int): Any {
@@ -29,12 +28,11 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
     override fun redo() {
         if (undoOperationHistory.isNotEmpty()) {
             val operationHistoryElement = undoOperationHistory.last()
-            firstOperand = recentResults.last()
+            firstOperand = operationHistoryElement.result
             firstOperandLiveData.value = firstOperand
             operationHistory.add(operationHistoryElement)
             operationHistoryLiveData.value = operationHistory
             undoOperationHistory.remove(operationHistoryElement)
-            recentResults.remove(firstOperand)
         }
 
     }
@@ -42,10 +40,12 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
     override fun undo() {
         if (operationHistory.isNotEmpty()) {
             val operationHistoryElement = operationHistory.last()
-            recentResults.add(firstOperand)
-            firstOperand = operationHistoryElement.third
-            firstOperandLiveData.value = firstOperand
+//            Log.d(TAG,"first operand before: $firstOperand")
             operationHistory.remove(operationHistoryElement)
+            firstOperand = operationHistoryElement.firstOperand
+//            Log.d(TAG,"first operand after: $firstOperand")
+            firstOperandLiveData.value = firstOperand
+//            Log.d(TAG,"first operand livedata after: $firstOperand")
             operationHistoryLiveData.value = operationHistory
             undoOperationHistory.add(operationHistoryElement)
         }
@@ -62,44 +62,42 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
         return when (secondOperand) {
             0 -> Exception("Can't Divide on Zero")
             else -> {
+                val temporaryFirstOperand = firstOperand
                 firstOperand /= secondOperand
-                addToOperationsHistory(Triple("/",secondOperand,firstOperand)
+                addToOperationsHistory(Operation("/",temporaryFirstOperand,secondOperand,firstOperand)
                 )
-                firstOperandLiveData.value = firstOperand
-
                 firstOperand
             }
         }
     }
 
     private fun add(secondOperand: Int): Float {
+        val temporaryFirstOperand = firstOperand
         firstOperand += secondOperand
-        addToOperationsHistory(Triple("+",secondOperand,firstOperand)
+        addToOperationsHistory(Operation("+",temporaryFirstOperand,secondOperand,firstOperand)
         )
-        firstOperandLiveData.value = firstOperand
-
-        Log.d(TAG, "operations::: ${firstOperandLiveData.value}")
         return firstOperand
     }
 
     private fun subtract(secondOperand: Int): Float {
+        val temporaryFirstOperand = firstOperand
         firstOperand -= secondOperand
-        addToOperationsHistory(Triple("-",secondOperand,firstOperand)
+        addToOperationsHistory(Operation("-",temporaryFirstOperand,secondOperand,firstOperand)
         )
-        firstOperandLiveData.value = firstOperand
         return firstOperand
     }
 
     private fun multiply(secondOperand: Int): Float {
+        val temporaryFirstOperand = firstOperand
         firstOperand *= secondOperand
-        firstOperandLiveData.value = firstOperand
-        addToOperationsHistory(Triple("*",secondOperand,firstOperand)
+        addToOperationsHistory(Operation("*",temporaryFirstOperand,secondOperand,firstOperand)
         )
         return firstOperand
     }
 
-    private fun addToOperationsHistory(operation:Triple<String,Int,Float>){
+    private fun addToOperationsHistory(operation:Operation){
         operationHistory.add(operation)
         operationHistoryLiveData.value = operationHistory
+        firstOperandLiveData.value = firstOperand
     }
 }

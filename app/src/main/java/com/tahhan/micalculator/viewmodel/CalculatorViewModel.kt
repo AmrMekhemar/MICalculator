@@ -1,10 +1,10 @@
 package com.tahhan.micalculator.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tahhan.micalculator.model.CalculatorRepository
 import com.tahhan.micalculator.model.CalculatorRepositoryImpl
+import com.tahhan.micalculator.model.Operation
 
 class CalculatorViewModel(
     private val repository: CalculatorRepositoryImpl
@@ -26,7 +26,7 @@ class CalculatorViewModel(
         repository.reset()
     }
 
-    fun getOperationHistoryLiveData(): MutableLiveData<List<Triple<String, Int, Float>>> =
+    fun getOperationHistoryLiveData(): MutableLiveData<List<Operation>> =
         repository.operationHistoryLiveData
 
 

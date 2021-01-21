@@ -7,13 +7,37 @@
     android:layout_height="match_parent"
     tools:context=".view.CalculatorFragment">
 
+    <Button
+        android:id="@+id/deselectButton"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:width="110dp"
+        android:text="deselect"
+        app:layout_constraintBottom_toBottomOf="@+id/divisionButton"
+        app:layout_constraintEnd_toStartOf="@+id/divisionButton" />
+
+    <Button
+        android:id="@+id/resetButton"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:width="110dp"
+        android:text="reset"
+        app:layout_constraintBottom_toBottomOf="@+id/multiplyButton"
+        app:layout_constraintEnd_toStartOf="@+id/multiplyButton" />
+
     <TextView
         android:id="@+id/resultTextView"
+        style="@style/Widget.MaterialComponents.TextView"
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:textAlignment="center"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/resultsInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,7 +58,7 @@
         android:id="@+id/minusButton"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="88dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:text="@string/min"
         app:icon="@drawable/minus"
@@ -119,6 +143,7 @@
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/resultTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/OperationsHistorytextView"
@@ -133,7 +158,7 @@
         android:fontFamily="@font/sriracha"
         android:text="@string/history"
         android:textSize="24sp"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

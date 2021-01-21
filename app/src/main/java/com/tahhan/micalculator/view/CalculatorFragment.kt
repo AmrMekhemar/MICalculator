@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.tahhan.micalculator.R
 import com.tahhan.micalculator.model.CalculatorRepositoryImpl
 import com.tahhan.micalculator.toast
@@ -28,8 +30,9 @@ class CalculatorFragment : Fragment() {
             sharedPrefs().edit().putFloat(RESULT_KEY, value).apply()
             field = value
         }
-
-    var operation: String = ""
+    private var operation = ""
+    private var secondOperand = ""
+    private var operationHistory = mutableListOf<Pair<String, Int>>()
 
     private val viewModel: CalculatorViewModel by viewModels {
         CalculatorViewModelFactory(CalculatorRepositoryImpl(firstOperand))
@@ -46,7 +49,6 @@ class CalculatorFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         resultTextView.text = firstOperand.toString()
-
         divisionButton.setOnClickListener {
             operation = "/"
             makeButtonsNonClickable(operation)
@@ -64,19 +66,31 @@ class CalculatorFragment : Fragment() {
             makeButtonsNonClickable(operation)
         }
         equalButton.setOnClickListener {
-            operate()
+            secondOperand = enterNumberEditText.text.toString()
+            operate(secondOperand)
+            makeButtonsClickable()
+            populateRV()
+        }
+        resetButton.setOnClickListener {
+            firstOperand = 0f
+            secondOperand = ""
+            makeButtonsClickable()
+            resultTextView.text = firstOperand.toString()
+        }
+
+        deselectButton.setOnClickListener {
+            operation = ""
             makeButtonsClickable()
         }
     }
 
-    private fun operate() {
-
-        val secondOperand = enterNumberEditText.text.toString()
-        if (operation != "" && secondOperand != "") {
+    private fun operate(secondOperand: String) {
+        if (operation.isNotBlank() && secondOperand.isNotBlank()) {
             val returnValue = viewModel.operate(operation, secondOperand.toInt())
             if (returnValue is Float) {
                 firstOperand = returnValue
                 resultTextView.text = firstOperand.toString()
+                operationHistory.add(Pair(operation, secondOperand.toInt()))
             }
         } else requireContext().toast("you must click an operation then enter a number")
     }
@@ -134,5 +148,20 @@ class CalculatorFragment : Fragment() {
         minusButton.setBackgroundColor(primaryColor)
         plusButton.setBackgroundColor(primaryColor)
     }
+
+
+    private fun populateRV() {
+        historyRV.layoutManager = LinearLayoutManager(
+            requireContext(),
+            RecyclerView.VERTICAL, false
+        )
+        historyRV.adapter = OperationAdapter(operationHistory) { operationPair ->
+            secondOperand = operationPair.second.toString()
+            operation = operationPair.first
+            operate(secondOperand)
+            //  historyRV.adapter?.notifyDataSetChanged()
+        }
+    }
+
 
 }

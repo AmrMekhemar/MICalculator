@@ -1,13 +1,16 @@
 package com.tahhan.micalculator.view
 
 import android.content.Context
-import android.graphics.Color
+import android.graphics.Color.GRAY
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doBeforeTextChanged
+import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,16 +21,15 @@ import com.tahhan.micalculator.toast
 import com.tahhan.micalculator.viewmodel.CalculatorViewModel
 import com.tahhan.micalculator.viewmodel.CalculatorViewModelFactory
 import kotlinx.android.synthetic.main.fragment_calculator.*
-import java.lang.Exception
 
 
 private const val SHARED_PREFS = "1001"
 private const val RESULT_KEY = "1002"
-private const val TAG = "CalculatorFragment"
-
 
 class CalculatorFragment : Fragment() {
-    private var firstOperand = 0.0f
+    private var operationIsSelected = false
+    private var numberIsEntered = false
+    private var firstOperand = 0.0F
         get() = sharedPrefs().getFloat(RESULT_KEY, 0F)
         set(value) {
             sharedPrefs().edit().putFloat(RESULT_KEY, value).apply()
@@ -49,8 +51,8 @@ class CalculatorFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_calculator, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onStart() {
+        super.onStart()
         resultTextView.text = firstOperand.toString()
         setupListeners()
         observeFirstOperand()
@@ -60,15 +62,18 @@ class CalculatorFragment : Fragment() {
     private fun observeOperationHistory() {
         viewModel.getOperationHistoryLiveData().observe(viewLifecycleOwner, Observer {
             // Log.d(TAG,"operation= $it")
+            operationsHistoryTextView.visibility = View.VISIBLE
+            historyRV.visibility = View.VISIBLE
             historyRV.adapter = OperationAdapter(it) { operationItem ->
                 secondOperand = operationItem.secondOperand.toString()
                 operation = operationItem.operation
-                when (operation){
-                    "+"-> operation = "-"
-                    "-"-> operation = "+"
-                    "*"-> operation = "/"
-                    "/"-> operation = "*"
-                    else-> {}
+                when (operation) {
+                    "+" -> operation = "-"
+                    "-" -> operation = "+"
+                    "*" -> operation = "/"
+                    "/" -> operation = "*"
+                    else -> {
+                    }
                 }
                 operate(secondOperand)
             }
@@ -77,10 +82,11 @@ class CalculatorFragment : Fragment() {
 
     private fun observeFirstOperand() {
         viewModel.getFirstOperandLiveData().observe(viewLifecycleOwner, Observer {
-            firstOperand = it
+            firstOperand = it.toFloat()
             resultTextView.text = firstOperand.toString()
         })
     }
+
 
     private fun setupListeners() {
         divisionButton.setOnClickListener {
@@ -99,12 +105,9 @@ class CalculatorFragment : Fragment() {
             operation = "*"
             makeButtonsNonClickable(operation)
         }
-        equalButton.setOnClickListener {
-            secondOperand = enterNumberEditText.text.toString()
-            operate(secondOperand)
-            makeButtonsClickable()
-            populateRV()
-        }
+
+
+
         resetButton.setOnClickListener {
             secondOperand = ""
             makeButtonsClickable()
@@ -123,6 +126,30 @@ class CalculatorFragment : Fragment() {
             viewModel.undo()
             makeButtonsClickable()
         }
+        setEqualButtonState()
+        setEnterNumberEditTextChangeListener()
+    }
+
+    private fun setEnterNumberEditTextChangeListener() {
+        with(enterNumberEditText) {
+            addTextChangedListener {
+                doOnTextChanged { text, _, _, _ ->
+                    setNumberIsEnteredState(text)
+                }
+            }
+        }
+    }
+
+    private fun setNumberIsEnteredState(text: CharSequence?) {
+        numberIsEntered = true
+        setEqualButtonState()
+        if (text?.isNotEmpty()!!) {
+            numberIsEntered = true
+            setEqualButtonState()
+        } else {
+            numberIsEntered = false
+            setEqualButtonState()
+        }
     }
 
     private fun operate(secondOperand: String) {
@@ -131,6 +158,8 @@ class CalculatorFragment : Fragment() {
             if (returnValue !is Exception) {
                 firstOperand = returnValue.toString().toFloat()
                 resultTextView.text = firstOperand.toString()
+            } else {
+                returnValue.message?.let { requireContext().toast(it) }
             }
         } else requireContext().toast("you must click an operation and enter a number")
     }
@@ -140,41 +169,58 @@ class CalculatorFragment : Fragment() {
         requireContext().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
 
     private fun makeButtonsNonClickable(operation: String) {
-        val gray = Color.GRAY
         when (operation) {
             "+" -> {
-                divisionButton.isClickable = false
-                minusButton.isClickable = false
-                multiplyButton.isClickable = false
-                multiplyButton.setBackgroundColor(gray)
-                divisionButton.setBackgroundColor(gray)
-                minusButton.setBackgroundColor(gray)
+                setPlusOnlyClickable()
             }
             "-" -> {
-                divisionButton.isClickable = false
-                plusButton.isClickable = false
-                multiplyButton.isClickable = false
-                divisionButton.setBackgroundColor(gray)
-                plusButton.setBackgroundColor(gray)
-                multiplyButton.setBackgroundColor(gray)
+                setMinusOnlyClickable()
             }
             "/" -> {
-                minusButton.isClickable = false
-                plusButton.isClickable = false
-                multiplyButton.isClickable = false
-                minusButton.setBackgroundColor(gray)
-                plusButton.setBackgroundColor(gray)
-                multiplyButton.setBackgroundColor(gray)
+                setDivisionOnlyClickable()
             }
             "*" -> {
-                divisionButton.isClickable = false
-                plusButton.isClickable = false
-                minusButton.isClickable = false
-                divisionButton.setBackgroundColor(gray)
-                plusButton.setBackgroundColor(gray)
-                minusButton.setBackgroundColor(gray)
+                setMultiplyOnlyClickable()
             }
         }
+        operationIsSelected = true
+        setEqualButtonState()
+    }
+
+    private fun setMultiplyOnlyClickable() {
+        divisionButton.isClickable = false
+        plusButton.isClickable = false
+        minusButton.isClickable = false
+        divisionButton.setBackgroundColor(GRAY)
+        plusButton.setBackgroundColor(GRAY)
+        minusButton.setBackgroundColor(GRAY)
+    }
+
+    private fun setDivisionOnlyClickable() {
+        minusButton.isClickable = false
+        plusButton.isClickable = false
+        multiplyButton.isClickable = false
+        minusButton.setBackgroundColor(GRAY)
+        plusButton.setBackgroundColor(GRAY)
+        multiplyButton.setBackgroundColor(GRAY)
+    }
+
+    private fun setMinusOnlyClickable() {
+        divisionButton.isClickable = false
+        plusButton.isClickable = false
+        multiplyButton.isClickable = false
+        divisionButton.setBackgroundColor(GRAY)
+        plusButton.setBackgroundColor(GRAY)
+        multiplyButton.setBackgroundColor(GRAY)
+    }
+
+    private fun setPlusOnlyClickable() {
+        divisionButton.isClickable = false
+        minusButton.isClickable = false
+        multiplyButton.isClickable = false
+        multiplyButton.setBackgroundColor(GRAY)
+        divisionButton.setBackgroundColor(GRAY)
+        minusButton.setBackgroundColor(GRAY)
     }
 
     private fun makeButtonsClickable() {
@@ -190,7 +236,6 @@ class CalculatorFragment : Fragment() {
         enterNumberEditText.text?.clear()
     }
 
-
     private fun populateRV() {
         historyRV.layoutManager = LinearLayoutManager(
             requireContext(),
@@ -199,6 +244,19 @@ class CalculatorFragment : Fragment() {
         observeOperationHistory()
     }
 
+    private fun setEqualButtonState() {
+        with(equalButton) {
+            if (operationIsSelected && numberIsEntered) {
+                setOnClickListener {
+                    secondOperand = enterNumberEditText.text.toString()
+                    operate(secondOperand)
+                    makeButtonsClickable()
+                    populateRV()
+                    isClickable = false
+                    operationIsSelected = false
+                    numberIsEntered = false
+                }
+            } else isClickable = false
+        }
+    }
 }
-
-

@@ -10,4 +10,5 @@
     <string name="undo">undo</string>
     <string name="enter_second_operand">Enter Second Operand</string>
     <string name="history">History</string>
+    <string name="description_text">You should insert a second operand an choose a specific operation before attempting to perform an operation on them</string>
 </resources>

@@ -32,5 +32,4 @@ class CalculatorViewModel(
 
     fun getFirstOperandLiveData(): MutableLiveData<Float> = repository.firstOperandLiveData
 
-
 }

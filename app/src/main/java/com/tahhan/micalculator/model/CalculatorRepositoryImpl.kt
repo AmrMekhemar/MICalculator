@@ -1,6 +1,5 @@
 package com.tahhan.micalculator.model
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import java.lang.Exception
 
@@ -52,7 +51,7 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
     }
 
     override fun reset() {
-        firstOperand = 0F
+        firstOperand = 0.0F
         firstOperandLiveData.value = firstOperand
         operationHistory = mutableListOf()
         operationHistoryLiveData.value = operationHistory
@@ -64,7 +63,8 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
             else -> {
                 val temporaryFirstOperand = firstOperand
                 firstOperand /= secondOperand
-                addToOperationsHistory(Operation("/",temporaryFirstOperand,secondOperand,firstOperand)
+                addToOperationsHistory(
+                    Operation("/", temporaryFirstOperand, secondOperand, firstOperand)
                 )
                 firstOperand
             }
@@ -74,7 +74,8 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
     private fun add(secondOperand: Int): Float {
         val temporaryFirstOperand = firstOperand
         firstOperand += secondOperand
-        addToOperationsHistory(Operation("+",temporaryFirstOperand,secondOperand,firstOperand)
+        addToOperationsHistory(
+            Operation("+", temporaryFirstOperand, secondOperand, firstOperand)
         )
         return firstOperand
     }
@@ -82,7 +83,8 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
     private fun subtract(secondOperand: Int): Float {
         val temporaryFirstOperand = firstOperand
         firstOperand -= secondOperand
-        addToOperationsHistory(Operation("-",temporaryFirstOperand,secondOperand,firstOperand)
+        addToOperationsHistory(
+            Operation("-", temporaryFirstOperand, secondOperand, firstOperand)
         )
         return firstOperand
     }
@@ -90,12 +92,13 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
     private fun multiply(secondOperand: Int): Float {
         val temporaryFirstOperand = firstOperand
         firstOperand *= secondOperand
-        addToOperationsHistory(Operation("*",temporaryFirstOperand,secondOperand,firstOperand)
+        addToOperationsHistory(
+            Operation("*", temporaryFirstOperand, secondOperand, firstOperand)
         )
         return firstOperand
     }
 
-    private fun addToOperationsHistory(operation:Operation){
+    private fun addToOperationsHistory(operation: Operation) {
         operationHistory.add(operation)
         operationHistoryLiveData.value = operationHistory
         firstOperandLiveData.value = firstOperand

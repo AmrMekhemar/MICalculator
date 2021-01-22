@@ -132,10 +132,8 @@ class CalculatorFragment : Fragment() {
 
     private fun setEnterNumberEditTextChangeListener() {
         with(enterNumberEditText) {
-            addTextChangedListener {
-                doOnTextChanged { text, _, _, _ ->
-                    setNumberIsEnteredState(text)
-                }
+            doOnTextChanged { text, _, _, _ ->
+                setNumberIsEnteredState(text)
             }
         }
     }

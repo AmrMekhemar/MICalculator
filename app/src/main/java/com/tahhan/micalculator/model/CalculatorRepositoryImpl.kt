@@ -24,7 +24,7 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
     }
 
 
-    override fun redo() {
+    override fun redo(): Float {
         if (undoOperationHistory.isNotEmpty()) {
             val operationHistoryElement = undoOperationHistory.last()
             firstOperand = operationHistoryElement.result
@@ -33,10 +33,10 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
             operationHistoryLiveData.value = operationHistory
             undoOperationHistory.remove(operationHistoryElement)
         }
-
+        return firstOperand
     }
 
-    override fun undo() {
+    override fun undo(): Float {
         if (operationHistory.isNotEmpty()) {
             val operationHistoryElement = operationHistory.last()
 //            Log.d(TAG,"first operand before: $firstOperand")
@@ -48,6 +48,8 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
             operationHistoryLiveData.value = operationHistory
             undoOperationHistory.add(operationHistoryElement)
         }
+        return firstOperand
+
     }
 
     override fun reset() {

@@ -1,20 +1,18 @@
 package com.tahhan.micalculator.view
 
-import android.content.Context
 import android.graphics.Color.GRAY
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doBeforeTextChanged
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.tahhan.micalculator.App.Companion.sharedPrefsManager
 import com.tahhan.micalculator.R
 import com.tahhan.micalculator.model.CalculatorRepositoryImpl
 import com.tahhan.micalculator.toast
@@ -23,25 +21,16 @@ import com.tahhan.micalculator.viewmodel.CalculatorViewModelFactory
 import kotlinx.android.synthetic.main.fragment_calculator.*
 
 
-private const val SHARED_PREFS = "1001"
-private const val RESULT_KEY = "1002"
-
 class CalculatorFragment : Fragment() {
     private var operationIsSelected = false
     private var numberIsEntered = false
     private var firstOperand = 0.0F
-        get() = sharedPrefs().getFloat(RESULT_KEY, 0F)
-        set(value) {
-            sharedPrefs().edit().putFloat(RESULT_KEY, value).apply()
-            field = value
-        }
     private var operation = ""
     private var secondOperand = ""
-
-
     private val viewModel: CalculatorViewModel by viewModels {
-        CalculatorViewModelFactory(CalculatorRepositoryImpl(firstOperand))
+        CalculatorViewModelFactory(CalculatorRepositoryImpl(firstOperand), sharedPrefsManager)
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,6 +42,7 @@ class CalculatorFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        firstOperand = sharedPrefsManager.firstOperand
         resultTextView.text = firstOperand.toString()
         setupListeners()
         observeFirstOperand()
@@ -151,7 +141,6 @@ class CalculatorFragment : Fragment() {
     }
 
     private fun operate(secondOperand: String) {
-        if (operation.isNotBlank() && secondOperand.isNotBlank()) {
             val returnValue = viewModel.operate(operation, secondOperand.toInt())
             if (returnValue !is Exception) {
                 firstOperand = returnValue.toString().toFloat()
@@ -159,12 +148,8 @@ class CalculatorFragment : Fragment() {
             } else {
                 returnValue.message?.let { requireContext().toast(it) }
             }
-        } else requireContext().toast("you must click an operation and enter a number")
     }
 
-
-    private fun sharedPrefs() =
-        requireContext().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
 
     private fun makeButtonsNonClickable(operation: String) {
         when (operation) {
@@ -257,4 +242,5 @@ class CalculatorFragment : Fragment() {
             } else isClickable = false
         }
     }
+
 }

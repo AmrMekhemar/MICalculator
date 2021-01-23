@@ -27,6 +27,9 @@ class CalculatorFragment : Fragment() {
     private var firstOperand = 0.0F
     private var operation = ""
     private var secondOperand = ""
+    val primaryColor by lazy {
+        ContextCompat.getColor(requireContext(), R.color.purple_700)
+    }
     private val viewModel: CalculatorViewModel by viewModels {
         CalculatorViewModelFactory(CalculatorRepositoryImpl(firstOperand), sharedPrefsManager)
     }
@@ -141,13 +144,13 @@ class CalculatorFragment : Fragment() {
     }
 
     private fun operate(secondOperand: String) {
-            val returnValue = viewModel.operate(operation, secondOperand.toInt())
-            if (returnValue !is Exception) {
-                firstOperand = returnValue.toString().toFloat()
-                resultTextView.text = firstOperand.toString()
-            } else {
-                returnValue.message?.let { requireContext().toast(it) }
-            }
+        val returnValue = viewModel.operate(operation, secondOperand.toInt())
+        if (returnValue !is Exception) {
+            firstOperand = returnValue.toString().toFloat()
+            resultTextView.text = firstOperand.toString()
+        } else {
+            returnValue.message?.let { requireContext().toast(it) }
+        }
     }
 
 
@@ -207,7 +210,6 @@ class CalculatorFragment : Fragment() {
     }
 
     private fun makeButtonsClickable() {
-        val primaryColor = ContextCompat.getColor(requireContext(), R.color.purple_700)
         divisionButton.isClickable = true
         minusButton.isClickable = true
         multiplyButton.isClickable = true
@@ -230,6 +232,7 @@ class CalculatorFragment : Fragment() {
     private fun setEqualButtonState() {
         with(equalButton) {
             if (operationIsSelected && numberIsEntered) {
+                setBackgroundColor(primaryColor)
                 setOnClickListener {
                     secondOperand = enterNumberEditText.text.toString()
                     operate(secondOperand)

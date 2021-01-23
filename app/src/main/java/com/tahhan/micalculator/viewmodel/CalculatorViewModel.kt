@@ -16,7 +16,6 @@ class CalculatorViewModel(
         if (returnValue !is Exception)
             setFirstOperand(returnValue as Float)
         return returnValue
-
     }
 
 
@@ -46,8 +45,6 @@ class CalculatorViewModel(
     fun setFirstOperand(value: Float) {
         sharedPrefsManager.firstOperand = value
     }
-
-    fun getFirstOperand() = sharedPrefsManager.firstOperand
 
 
 }

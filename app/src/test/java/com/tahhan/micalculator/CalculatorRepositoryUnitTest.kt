@@ -1,13 +1,20 @@
 package com.tahhan.micalculator
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.tahhan.micalculator.model.CalculatorRepositoryImpl
-import org.junit.Test
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
-import java.lang.Exception
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.junit.MockitoJUnitRunner
 
 
+@RunWith(MockitoJUnitRunner::class)
 class CalculatorRepositoryUnitTest {
+    @get:Rule
+    val taskExecutorRule = InstantTaskExecutorRule()
     lateinit var repo: CalculatorRepositoryImpl
 
     @Before
@@ -58,5 +65,18 @@ class CalculatorRepositoryUnitTest {
         assertEquals(expected, repo.firstOperand)
     }
 
+    @Test
+    fun redo_returnsANotNullFloatValue() {
+        assertNotNull(repo.redo())
+    }
 
+    @Test
+    fun undo_returnsANotNullFloatValue() {
+        assertNotNull(repo.redo())
+    }
+    @Test
+    fun reset(){
+        repo.reset()
+        assertEquals(0F,repo.firstOperand)
+    }
 }

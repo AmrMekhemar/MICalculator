@@ -20,6 +20,10 @@ import com.tahhan.micalculator.viewmodel.CalculatorViewModel
 import com.tahhan.micalculator.viewmodel.CalculatorViewModelFactory
 import kotlinx.android.synthetic.main.fragment_calculator.*
 
+/**
+ * Calculator fragment
+ *
+ */
 class CalculatorFragment : Fragment() {
     private var operationIsSelected = false
     private var numberIsEntered = false
@@ -33,15 +37,20 @@ class CalculatorFragment : Fragment() {
         CalculatorViewModelFactory(CalculatorRepositoryImpl(firstOperand), sharedPrefsManager)
     }
 
-
+    /** Inflate the layout for this fragment
+     *
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_calculator, container, false)
     }
 
+    /**
+     * setting up the layout and binding data to views
+     * and subscribing to the livedata objects
+     */
     override fun onStart() {
         super.onStart()
         firstOperand = sharedPrefsManager.firstOperand
@@ -52,7 +61,10 @@ class CalculatorFragment : Fragment() {
     }
 
 
-
+    /**
+     * Observes the History liveData object and binds the data to recyclerView
+     * and sets the itemListener for the recyclerView
+     */
     private fun observeOperationHistory() {
         viewModel.getOperationHistoryLiveData().observe(viewLifecycleOwner, Observer {
             operationsHistoryTextView.visibility = View.VISIBLE
@@ -73,6 +85,9 @@ class CalculatorFragment : Fragment() {
         })
     }
 
+    /**
+     * Observes the firOperand liveData object and binds the value to the view
+     */
     private fun observeFirstOperand() {
         viewModel.getFirstOperandLiveData().observe(viewLifecycleOwner, Observer {
             firstOperand = it.toFloat()
@@ -80,7 +95,10 @@ class CalculatorFragment : Fragment() {
         })
     }
 
-
+    /**
+     * Setup listeners for the views
+     *
+     */
     private fun setupListeners() {
         divisionButton.setOnClickListener {
             operation = "/"
@@ -122,6 +140,7 @@ class CalculatorFragment : Fragment() {
         setEqualButtonState()
         setEnterNumberEditTextChangeListener()
     }
+
 
     private fun setEnterNumberEditTextChangeListener() {
         with(enterNumberEditText) {

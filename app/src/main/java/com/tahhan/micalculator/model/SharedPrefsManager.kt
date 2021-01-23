@@ -5,6 +5,12 @@ import android.content.Context
 private const val SHARED_PREFS = "1001"
 private const val RESULT_KEY = "1002"
 
+/**
+ * Shared prefs manager
+ *
+ * @property context
+ * @constructor Creates a SharedPrefsManager object
+ */
 class SharedPrefsManager(private val context: Context) {
      var firstOperand = 0.0F
         get() = sharedPrefs().getFloat(RESULT_KEY, 0F)

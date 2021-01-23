@@ -8,7 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tahhan.micalculator.R
 import com.tahhan.micalculator.model.Operation
 
-
+/**
+ * Operation adapter class
+ *
+ * @property operations
+ * @property listener
+ * @constructor Creates an Operation adapter object
+ */
 class OperationAdapter(
     private var operations: List<Operation>,
     val listener: (Operation) -> Unit
@@ -19,12 +25,25 @@ class OperationAdapter(
         val secondOperandTV: TextView = itemView.findViewById(R.id.secondOperandTV)
     }
 
+    /**
+     * Inflates the historyItem view
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v: View = LayoutInflater.from(parent.context)
             .inflate(R.layout.history_item, parent, false)
         return ViewHolder(v)
     }
 
+    /**
+     * binds the operation data to history item
+     *
+     * @param holder
+     * @param position
+     */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = operations[position]
         holder.operationsTV.text = item.operation
@@ -36,6 +55,11 @@ class OperationAdapter(
 
     }
 
+    /**
+     * returns the size of the operationsList
+     *
+     * @return
+     */
     override fun getItemCount(): Int {
         return operations.size
     }

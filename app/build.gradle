@@ -2,19 +2,18 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-android-extensions'
+    id 'org.jetbrains.dokka'
 }
 
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
-
     defaultConfig {
         applicationId "com.tahhan.micalculator"
         minSdkVersion 22
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -23,6 +22,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            testCoverageEnabled true
+        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -30,6 +32,18 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+//    dokka {
+//        outputFormat = 'html'
+//        outputDirectory = "$buildFile/javadoc"
+//       // reportUndocumented = true
+//    }
+    dokkaHtml.configure {
+        dokkaSourceSets {
+            named("main") {
+                noAndroidSdkLink.set(false)
+            }
+        }
     }
 }
 
@@ -46,7 +60,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.2'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     testImplementation 'junit:junit:4.13.1'
-
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0'

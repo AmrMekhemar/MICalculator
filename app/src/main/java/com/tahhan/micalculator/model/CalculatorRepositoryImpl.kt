@@ -3,6 +3,12 @@ package com.tahhan.micalculator.model
 import androidx.lifecycle.MutableLiveData
 import java.lang.Exception
 
+/**
+ * CalculatorRepositoryImpl class
+ *
+ * @property firstOperand
+ * @constructor Creates empty CalculatorRepositoryImpl Object
+ */
 class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
     var operationHistoryLiveData: MutableLiveData<List<Operation>> =
         MutableLiveData()
@@ -10,7 +16,13 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
     private var operationHistory = mutableListOf<Operation>()
     private var undoOperationHistory = mutableListOf<Operation>()
 
-
+    /**
+     * operates the desired calculation
+     *
+     * @param operation
+     * @param secondOperand
+     * @return
+     */
     override fun operate(operation: String, secondOperand: Int): Any {
         return when (operation) {
             "+" -> doOperation(AddOperation(), secondOperand, operation)
@@ -32,6 +44,14 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
         }
     }
 
+    /**
+     * Do a specific calculation operation
+     *
+     * @param operationStrategy
+     * @param secondOperand
+     * @param operation
+     * @return
+     */
     private fun doOperation(
         operationStrategy: OperationStrategy,
         secondOperand: Int,
@@ -44,7 +64,10 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
         return firstOperand
     }
 
-
+    /**
+     * Redo the most recent undo operation
+     * @return
+     */
     override fun redo(): Float {
         if (undoOperationHistory.isNotEmpty()) {
             val operationHistoryElement = undoOperationHistory.last()
@@ -56,6 +79,10 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
         return firstOperand
     }
 
+    /**
+     * Undo the most recent operation
+     * @return
+     */
     override fun undo(): Float {
         if (operationHistory.isNotEmpty()) {
             val operationHistoryElement = operationHistory.last()
@@ -67,12 +94,19 @@ class CalculatorRepositoryImpl(var firstOperand: Float) : CalculatorRepository {
         return firstOperand
     }
 
+    /**
+     * resets the first operand and operation history
+     */
     override fun reset() {
         firstOperand = 0.0F
         operationHistory = mutableListOf()
         updateLiveDataObjects()
     }
 
+    /**
+     * updates the firstOperandLiveData
+     * and the operationHistoryLiveData with the their new values
+     */
     private fun updateLiveDataObjects() {
         firstOperandLiveData.value = firstOperand
         operationHistoryLiveData.value = operationHistory

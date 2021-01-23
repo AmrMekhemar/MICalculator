@@ -6,7 +6,7 @@ import com.nhaarman.mockitokotlin2.whenever
 import com.tahhan.micalculator.model.CalculatorRepositoryImpl
 import com.tahhan.micalculator.model.Operation
 import com.tahhan.micalculator.viewmodel.CalculatorViewModel
-import com.tahhan.micalculator.viewmodel.SharedPrefsManager
+import com.tahhan.micalculator.model.SharedPrefsManager
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test

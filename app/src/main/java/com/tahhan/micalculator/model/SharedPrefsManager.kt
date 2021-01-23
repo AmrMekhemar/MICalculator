@@ -1,4 +1,4 @@
-package com.tahhan.micalculator.viewmodel
+package com.tahhan.micalculator.model
 
 import android.content.Context
 

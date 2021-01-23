@@ -3,6 +3,7 @@ package com.tahhan.micalculator.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.tahhan.micalculator.model.CalculatorRepositoryImpl
+import com.tahhan.micalculator.model.SharedPrefsManager
 
 class CalculatorViewModelFactory(
     private val repo: CalculatorRepositoryImpl,

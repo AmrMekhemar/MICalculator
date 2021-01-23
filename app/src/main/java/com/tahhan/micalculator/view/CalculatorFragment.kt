@@ -20,14 +20,13 @@ import com.tahhan.micalculator.viewmodel.CalculatorViewModel
 import com.tahhan.micalculator.viewmodel.CalculatorViewModelFactory
 import kotlinx.android.synthetic.main.fragment_calculator.*
 
-
 class CalculatorFragment : Fragment() {
     private var operationIsSelected = false
     private var numberIsEntered = false
     private var firstOperand = 0.0F
     private var operation = ""
     private var secondOperand = ""
-    val primaryColor by lazy {
+    private val primaryColor by lazy {
         ContextCompat.getColor(requireContext(), R.color.purple_700)
     }
     private val viewModel: CalculatorViewModel by viewModels {
@@ -52,9 +51,10 @@ class CalculatorFragment : Fragment() {
         populateRV()
     }
 
+
+
     private fun observeOperationHistory() {
         viewModel.getOperationHistoryLiveData().observe(viewLifecycleOwner, Observer {
-            // Log.d(TAG,"operation= $it")
             operationsHistoryTextView.visibility = View.VISIBLE
             historyRV.visibility = View.VISIBLE
             historyRV.adapter = OperationAdapter(it) { operationItem ->
@@ -241,9 +241,9 @@ class CalculatorFragment : Fragment() {
                     isClickable = false
                     operationIsSelected = false
                     numberIsEntered = false
+                    setBackgroundColor(GRAY)
                 }
             } else isClickable = false
         }
     }
-
 }

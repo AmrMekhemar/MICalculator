@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.tahhan.micalculator.model.CalculatorRepository
 import com.tahhan.micalculator.model.CalculatorRepositoryImpl
 import com.tahhan.micalculator.model.Operation
+import com.tahhan.micalculator.model.SharedPrefsManager
 import java.lang.Exception
 
 class CalculatorViewModel(

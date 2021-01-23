@@ -15,10 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tahhan.micalculator.App.Companion.sharedPrefsManager
 import com.tahhan.micalculator.R
 import com.tahhan.micalculator.model.CalculatorRepositoryImpl
-import com.tahhan.micalculator.toast
 import com.tahhan.micalculator.viewmodel.CalculatorViewModel
 import com.tahhan.micalculator.viewmodel.CalculatorViewModelFactory
 import kotlinx.android.synthetic.main.fragment_calculator.*
+import kotlin.math.min
 
 /**
  * Calculator fragment
@@ -102,40 +102,87 @@ class CalculatorFragment : Fragment() {
     private fun setupListeners() {
         divisionButton.setOnClickListener {
             operation = "/"
-            makeButtonsNonClickable(operation)
+            requireView().makeButtonsNonClickable(
+                operation,
+                plusButton,
+                minusButton,
+                multiplyButton
+            )
+            operationIsSelected = true
+            setEqualButtonState()
         }
         minusButton.setOnClickListener {
             operation = "-"
-            makeButtonsNonClickable(operation)
+            requireView().makeButtonsNonClickable(
+                operation,
+                plusButton,
+                divisionButton,
+                multiplyButton
+            )
+            operationIsSelected = true
+            setEqualButtonState()
         }
         plusButton.setOnClickListener {
             operation = "+"
-            makeButtonsNonClickable(operation)
+            requireView().makeButtonsNonClickable(
+                operation,
+                divisionButton,
+                minusButton,
+                multiplyButton
+            )
+            operationIsSelected = true
+            setEqualButtonState()
         }
         multiplyButton.setOnClickListener {
             operation = "*"
-            makeButtonsNonClickable(operation)
+            requireView().makeButtonsNonClickable(
+                operation,
+                plusButton,
+                minusButton,
+                divisionButton
+            )
+            operationIsSelected = true
+            setEqualButtonState()
         }
 
 
 
         resetButton.setOnClickListener {
             secondOperand = ""
-            makeButtonsClickable()
+            requireView().makeButtonsClickable(
+                divisionButton,
+                minusButton,
+                multiplyButton, plusButton, enterNumberEditText
+            )
             viewModel.reset()
         }
 
         deselectButton.setOnClickListener {
             operation = ""
-            makeButtonsClickable()
+            requireView().makeButtonsClickable(
+                divisionButton,
+                minusButton,
+                multiplyButton, plusButton, enterNumberEditText
+            )
+            numberIsEntered = false
+            operationIsSelected = false
+            setEqualButtonState()
         }
         redoButton.setOnClickListener {
             viewModel.redo()
-            makeButtonsClickable()
+            requireView().makeButtonsClickable(
+                divisionButton,
+                minusButton,
+                multiplyButton, plusButton, enterNumberEditText
+            )
         }
         undoButton.setOnClickListener {
             viewModel.undo()
-            makeButtonsClickable()
+            requireView().makeButtonsClickable(
+                divisionButton,
+                minusButton,
+                multiplyButton, plusButton, enterNumberEditText
+            )
         }
         setEqualButtonState()
         setEnterNumberEditTextChangeListener()
@@ -173,73 +220,6 @@ class CalculatorFragment : Fragment() {
     }
 
 
-    private fun makeButtonsNonClickable(operation: String) {
-        when (operation) {
-            "+" -> {
-                setPlusOnlyClickable()
-            }
-            "-" -> {
-                setMinusOnlyClickable()
-            }
-            "/" -> {
-                setDivisionOnlyClickable()
-            }
-            "*" -> {
-                setMultiplyOnlyClickable()
-            }
-        }
-        operationIsSelected = true
-        setEqualButtonState()
-    }
-
-    private fun setMultiplyOnlyClickable() {
-        divisionButton.isClickable = false
-        plusButton.isClickable = false
-        minusButton.isClickable = false
-        divisionButton.setBackgroundColor(GRAY)
-        plusButton.setBackgroundColor(GRAY)
-        minusButton.setBackgroundColor(GRAY)
-    }
-
-    private fun setDivisionOnlyClickable() {
-        minusButton.isClickable = false
-        plusButton.isClickable = false
-        multiplyButton.isClickable = false
-        minusButton.setBackgroundColor(GRAY)
-        plusButton.setBackgroundColor(GRAY)
-        multiplyButton.setBackgroundColor(GRAY)
-    }
-
-    private fun setMinusOnlyClickable() {
-        divisionButton.isClickable = false
-        plusButton.isClickable = false
-        multiplyButton.isClickable = false
-        divisionButton.setBackgroundColor(GRAY)
-        plusButton.setBackgroundColor(GRAY)
-        multiplyButton.setBackgroundColor(GRAY)
-    }
-
-    private fun setPlusOnlyClickable() {
-        divisionButton.isClickable = false
-        minusButton.isClickable = false
-        multiplyButton.isClickable = false
-        multiplyButton.setBackgroundColor(GRAY)
-        divisionButton.setBackgroundColor(GRAY)
-        minusButton.setBackgroundColor(GRAY)
-    }
-
-    private fun makeButtonsClickable() {
-        divisionButton.isClickable = true
-        minusButton.isClickable = true
-        multiplyButton.isClickable = true
-        plusButton.isClickable = true
-        multiplyButton.setBackgroundColor(primaryColor)
-        divisionButton.setBackgroundColor(primaryColor)
-        minusButton.setBackgroundColor(primaryColor)
-        plusButton.setBackgroundColor(primaryColor)
-        enterNumberEditText.text?.clear()
-    }
-
     private fun populateRV() {
         historyRV.layoutManager = LinearLayoutManager(
             requireContext(),
@@ -255,7 +235,11 @@ class CalculatorFragment : Fragment() {
                 setOnClickListener {
                     secondOperand = enterNumberEditText.text.toString()
                     operate(secondOperand)
-                    makeButtonsClickable()
+                    this.makeButtonsClickable(
+                        divisionButton,
+                        minusButton,
+                        multiplyButton, plusButton, enterNumberEditText
+                    )
                     populateRV()
                     isClickable = false
                     operationIsSelected = false
